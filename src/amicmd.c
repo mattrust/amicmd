@@ -18,21 +18,19 @@
 
 #include "muimacros.h"
 #include "gui.h"
+#include "amicmd.h"
 
 /* --- Library bases --- */
 struct Library *MUIMasterBase,*IntuitionBase;
+
 /* --- Global variables --- */
-APTR app,
-    wi_main,
-    lv_left, lv_right, to_left, to_right, lv_active, lv_inactive, to_active, to_inactive,
-    to_leftinfo, to_rightinfo, bt_leftup, bt_rightup,
-    bt_exit; 
+TheApp app;
 
 /* --- Failure handler --- */
-void fail(APTR app, char *str)
+void fail(TheApp app, char *str)
 {
-    if (app)
-        MUI_DisposeObject(app);
+    if (app.app)
+        MUI_DisposeObject(app.app);
 
     if (MUIMasterBase)
         CloseLibrary(MUIMasterBase);
@@ -58,20 +56,20 @@ int main(int argc, char **argv)
     if (!(MUIMasterBase =(struct Library *) OpenLibrary("muimaster.library",19)))
         fail(app,"Cannot open muimaster.library v19+\n");
 
-    app = ApplicationObject,
+    app.app = ApplicationObject,
         MUIA_Application_Title      , "AmiCommander",
     	MUIA_Application_Version    , "$VER: AmiCommander 0.1 (02.10.08)",
     	MUIA_Application_Copyright  , "GPL",
     	MUIA_Application_Author     , "Miklós Németh",
     	MUIA_Application_Description, "File manager", 
     	MUIA_Application_Base       , "AMICMD", 
-        SubWindow, wi_main = WindowObject,
+        SubWindow, app.wi_main = WindowObject,
             MUIA_Window_Title, "AmiCommander",
             MUIA_Window_ID, MAKE_ID('W','I','M','A'),
             WindowContents, VGroup,
                 Child, HGroup,
                     Child, VGroup,
-                        Child, to_left = TextObject,
+                        Child, app.to_left = TextObject,
                             TextFrame, 
                             MUIA_Text_Contents, "DH0:",
                             MUIA_Background, MUII_FILL,
@@ -79,10 +77,10 @@ int main(int argc, char **argv)
                             MUIA_InputMode, MUIV_InputMode_RelVerify,    
                         End,
                         Child, HGroup,
-                            Child, to_leftinfo = TextObject, TextFrame, End,
-                            Child, bt_leftup = WButton(".."),
+                            Child, app.to_leftinfo = TextObject, TextFrame, End,
+                            Child, app.bt_leftup = WButton(".."),
                         End,
-    			        Child, lv_left = ListviewObject,
+    			        Child, app.lv_left = ListviewObject,
                             MUIA_CycleChain, 1,
 						    MUIA_Listview_Input, TRUE,
 						    //MUIA_Listview_DoubleClick, TRUE,
@@ -98,16 +96,16 @@ int main(int argc, char **argv)
 					End,
 					Child, BalanceObject, End,
 					Child, VGroup,
-                        Child, to_right = TextObject,
+                        Child, app.to_right = TextObject,
                             TextFrame, 
                             MUIA_Text_Contents, "DH0:",     
                             MUIA_InputMode, MUIV_InputMode_RelVerify,      
                         End,
                         Child, HGroup,
-                            Child, to_rightinfo = TextObject, TextFrame, End,
-                            Child, bt_rightup = WButton(".."),
+                            Child, app.to_rightinfo = TextObject, TextFrame, End,
+                            Child, app.bt_rightup = WButton(".."),
                         End,
-    			        Child, lv_right = ListviewObject,
+    			        Child, app.lv_right = ListviewObject,
                             MUIA_CycleChain, 1,
                             MUIA_Listview_Input, TRUE,
                             //MUIA_Listview_DoubleClick, TRUE,
@@ -130,42 +128,42 @@ int main(int argc, char **argv)
                     Child, NButton("\033bF9\033n Rename",TRUE),
                     Child, NButton("\033bF7\033n MakeDir",TRUE),
                     Child, NButton("\033bF8\033n Delete",TRUE),
-                    Child, bt_exit = NButton("\033bF10\033n Exit",FALSE),
+                    Child, app.bt_exit = NButton("\033bF10\033n Exit",FALSE),
                 End, 
     		End,
     	End,
     End;
  
 
-    if (!app)
+    if (!app.app)
         fail(app,"Failed to create application");
 
-    DoMethod(wi_main, MUIM_Notify, MUIA_Window_CloseRequest, TRUE,
-        app, 2, MUIM_Application_ReturnID, MUIV_Application_ReturnID_Quit);
+    DoMethod(app.wi_main, MUIM_Notify, MUIA_Window_CloseRequest, TRUE,
+        app.app, 2, MUIM_Application_ReturnID, MUIV_Application_ReturnID_Quit);
 
-    DoMethod(bt_exit, MUIM_Notify, MUIA_Pressed, FALSE,
-        app, 2, MUIM_Application_ReturnID, MUIV_Application_ReturnID_Quit);
+    DoMethod(app.bt_exit, MUIM_Notify, MUIA_Pressed, FALSE,
+        app.app, 2, MUIM_Application_ReturnID, MUIV_Application_ReturnID_Quit);
 
-    DoMethod(to_left, MUIM_Notify, MUIA_Pressed, FALSE,
-        app, 3, MUIM_CallHook, &UI_TabChangeHook, PID_Left);
+    DoMethod(app.to_left, MUIM_Notify, MUIA_Pressed, FALSE,
+        app.app, 3, MUIM_CallHook, &UI_TabChangeHook, PID_Left);
         
-    DoMethod(to_right, MUIM_Notify, MUIA_Pressed, FALSE,
-        app, 3, MUIM_CallHook, &UI_TabChangeHook, PID_Right);
+    DoMethod(app.to_right, MUIM_Notify, MUIA_Pressed, FALSE,
+        app.app, 3, MUIM_CallHook, &UI_TabChangeHook, PID_Right);
 
-    DoMethod(lv_left, MUIM_Notify, MUIA_Dirlist_Directory, MUIV_EveryTime,
-        to_left, 3, MUIM_Set, MUIA_Text_Contents, MUIV_TriggerValue);
+    DoMethod(app.lv_left, MUIM_Notify, MUIA_Dirlist_Directory, MUIV_EveryTime,
+        app.to_left, 3, MUIM_Set, MUIA_Text_Contents, MUIV_TriggerValue);
         
-    DoMethod(lv_right, MUIM_Notify, MUIA_Dirlist_Directory, MUIV_EveryTime,
-        to_right, 3, MUIM_Set, MUIA_Text_Contents, MUIV_TriggerValue); 
+    DoMethod(app.lv_right, MUIM_Notify, MUIA_Dirlist_Directory, MUIV_EveryTime,
+        app.to_right, 3, MUIM_Set, MUIA_Text_Contents, MUIV_TriggerValue); 
 
 
-    set(wi_main, MUIA_Window_ActiveObject, lv_left);
+    set(app.wi_main, MUIA_Window_ActiveObject, app.lv_left);
 
-    set(wi_main, MUIA_Window_Open, TRUE);
+    set(app.wi_main, MUIA_Window_Open, TRUE);
 
     /* --- Event handling --- */
 
-    while(DoMethod(app, MUIM_Application_NewInput, &sigs) != MUIV_Application_ReturnID_Quit)
+    while(DoMethod(app.app, MUIM_Application_NewInput, &sigs) != MUIV_Application_ReturnID_Quit)
     {
         if (sigs)
             sigs = Wait(sigs | SIGBREAKF_CTRL_C);
