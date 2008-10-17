@@ -1,13 +1,13 @@
 [Project]
 FileName=amicmd.dev
 Name=amicmd
-UnitCount=5
+UnitCount=6
 PchHead=-1
 PchSource=-1
 Ver=3
 IsCpp=1
 ProfilesCount=2
-ProfileIndex=1
+ProfileIndex=0
 Folders=
 
 [Unit1]
@@ -24,7 +24,7 @@ BuildCmd=
 Major=0
 Minor=1
 Release=1
-Build=103
+Build=119
 LanguageID=1033
 CharsetID=1252
 CompanyName=
@@ -67,7 +67,7 @@ CompilerSet=1
 compilerType=0
 
 [Unit2]
-FileName=src\mui.c
+FileName=src\amicmd.c
 CompileCpp=0
 Folder=amicmd
 Compile=1
@@ -132,4 +132,14 @@ IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=4
 compilerType=0
+
+[Unit6]
+FileName=src\amicmd.h
+CompileCpp=1
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
 

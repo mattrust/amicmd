@@ -14,40 +14,37 @@
 
 #include "SDI_hook.h"
 #include "gui.h"
-
-
-extern APTR wi_main, lv_left, lv_right, to_left, to_right,
-            lv_active, lv_inactive, to_active, to_inactive;
+#include "amicmd.h"
 
 HOOKPROTONHNO(UI_TabChange, void, int *arg)
 {
     
     if (*arg == PID_Left)
-        set(wi_main, MUIA_Window_ActiveObject, lv_left);
+        set(app.wi_main, MUIA_Window_ActiveObject, app.lv_left);
     else if (*arg == PID_Right)
-        set(wi_main, MUIA_Window_ActiveObject, lv_right);
+        set(app.wi_main, MUIA_Window_ActiveObject, app.lv_right);
         
-    get(wi_main, MUIA_Window_ActiveObject, &lv_active);
+    get(app.wi_main, MUIA_Window_ActiveObject, &(app).lv_active);
     
-    if (lv_active == lv_right)
+    if (app.lv_active == app.lv_right)
     {
-        to_active = to_right;
-        to_inactive = to_left;
-        lv_inactive = lv_left;
+        app.to_active = app.to_right;
+        app.to_inactive = app.to_left;
+        app.lv_inactive = app.lv_left;
     }
-    else if (lv_active == lv_left)
+    else if (app.lv_active == app.lv_left)
     {
-        to_active = to_left;
-        to_inactive = to_right;
-        lv_inactive = lv_right;
+        app.to_active = app.to_left;
+        app.to_inactive = app.to_right;
+        app.lv_inactive = app.lv_right;
     }
     else
         return;
     
-    set(to_inactive, MUIA_Background, MUII_BACKGROUND);
-    set(to_inactive, MUIA_Text_PreParse, "\0332");
-    set(to_active, MUIA_Background,MUII_FILL);
-    set(to_active, MUIA_Text_PreParse, "\0333"); 
+    set(app.to_inactive, MUIA_Background, MUII_BACKGROUND);
+    set(app.to_inactive, MUIA_Text_PreParse, "\0332");
+    set(app.to_active, MUIA_Background,MUII_FILL);
+    set(app.to_active, MUIA_Text_PreParse, "\0333"); 
     
 }
 

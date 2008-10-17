@@ -1,24 +1,24 @@
 # Project: amicmd
-# Compiler: ppc-MorphOS
+# Compiler: m68k-AmigaOS
 # Compiler Type: MingW 3
-# Makefile created by wxDev-C++ 6.10.2 on 17.10.08 06:06
+# Makefile created by wxDev-C++ 6.10.2 on 18.10.08 01:40
 
-CPP       = ppc-morphos-g++.exe
-CC        = ppc-morphos-gcc.exe
+CPP       = m68k-amigaos-g++.exe
+CC        = m68k-amigaos-gcc.exe
 WINDRES   = windres.exe
-OBJ       = mos/mui.o mos/gui.o
-LINKOBJ   = mos/mui.o mos/gui.o
-LIBS      = -L"D:/devel/AmiDevCpp/usr/local/amiga/ppc-morphos/lib"  
-INCS      = -I"D:/devel/AmiDevCpp/usr/local/amiga/ppc-morphos/sys-include"
-CXXINCS   = -I"D:/devel/AmiDevCpp/usr/local/amiga/ppc-morphos/sys-include"
+OBJ       = aos3/amicmd.o aos3/gui.o
+LINKOBJ   = aos3/amicmd.o aos3/gui.o
+LIBS      = -L"D:/devel/AmiDevCpp/usr/local/amiga/m68k-amigaos/lib" -L"D:/devel/AmiDevCpp/usr/local/amiga/m68k-amigaos/lib/libnix" -noixemul -s -lamiga -lauto -noixemul  
+INCS      = -I"D:/devel/AmiDevCpp/usr/local/amiga/m68k-amigaos/sys-include" -I"D:/devel/AmiDevCpp/usr/local/amiga/m68k-amigaos/include" -I"D:/devel/AmiDevCpp/usr/local/amiga/include/g++-3"
+CXXINCS   = -I"D:/devel/AmiDevCpp/usr/local/amiga/m68k-amigaos/sys-include" -I"D:/devel/AmiDevCpp/usr/local/amiga/m68k-amigaos/include" -I"D:/devel/AmiDevCpp/usr/local/amiga/include/g++-3"
 RCINCS    = --include-dir "D:/devel/AmiDevCpp/" --include-dir "D:/devel/AmiDevCpp/include/common"
-BIN       = amicmd_mos.exe
+BIN       = amicmd_aos3.exe
 DEFINES   = 
-CXXFLAGS  = $(CXXINCS) $(DEFINES)  
-CFLAGS    = $(INCS) $(DEFINES)   
+CXXFLAGS  = $(CXXINCS) $(DEFINES)   -s -noixemul
+CFLAGS    = $(INCS) $(DEFINES)    -s -noixemul
 GPROF     = gprof.exe
 RM        = rm -f
-LINK      = ppc-morphos-g++.exe
+LINK      = m68k-amigaos-g++.exe
 
 .PHONY: all all-before all-after clean clean-custom
 all: all-before $(BIN) all-after
@@ -27,10 +27,10 @@ clean: clean-custom
 	$(RM) $(OBJ) $(BIN)
 
 $(BIN): $(OBJ)
-	$(LINK) $(LINKOBJ) -o "amicmd_mos.exe" $(LIBS)
+	$(LINK) $(LINKOBJ) -o "amicmd_aos3.exe" $(LIBS)
 
-mos/mui.o: $(GLOBALDEPS) src/mui.c src/muimacros.h src/gui.h
-	$(CC) -c src/mui.c -o mos/mui.o $(CFLAGS)
+aos3/amicmd.o: $(GLOBALDEPS) src/amicmd.c src/muimacros.h src/gui.h src/amicmd.h
+	$(CC) -c src/amicmd.c -o aos3/amicmd.o $(CFLAGS)
 
-mos/gui.o: $(GLOBALDEPS) src/gui.c src/SDI_hook.h src/SDI_compiler.h src/gui.h
-	$(CC) -c src/gui.c -o mos/gui.o $(CFLAGS)
+aos3/gui.o: $(GLOBALDEPS) src/gui.c src/SDI_hook.h src/SDI_compiler.h src/gui.h src/amicmd.h
+	$(CC) -c src/gui.c -o aos3/gui.o $(CFLAGS)
