@@ -1,0 +1,36 @@
+# Project: amicmd
+# Compiler: ppc-MorphOS
+# Compiler Type: MingW 3
+# Makefile created by wxDev-C++ 6.10.2 on 17.10.08 06:06
+
+CPP       = ppc-morphos-g++.exe
+CC        = ppc-morphos-gcc.exe
+WINDRES   = windres.exe
+OBJ       = mos/mui.o mos/gui.o
+LINKOBJ   = mos/mui.o mos/gui.o
+LIBS      = -L"D:/devel/AmiDevCpp/usr/local/amiga/ppc-morphos/lib"  
+INCS      = -I"D:/devel/AmiDevCpp/usr/local/amiga/ppc-morphos/sys-include"
+CXXINCS   = -I"D:/devel/AmiDevCpp/usr/local/amiga/ppc-morphos/sys-include"
+RCINCS    = --include-dir "D:/devel/AmiDevCpp/" --include-dir "D:/devel/AmiDevCpp/include/common"
+BIN       = amicmd_mos.exe
+DEFINES   = 
+CXXFLAGS  = $(CXXINCS) $(DEFINES)  
+CFLAGS    = $(INCS) $(DEFINES)   
+GPROF     = gprof.exe
+RM        = rm -f
+LINK      = ppc-morphos-g++.exe
+
+.PHONY: all all-before all-after clean clean-custom
+all: all-before $(BIN) all-after
+
+clean: clean-custom
+	$(RM) $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(LINK) $(LINKOBJ) -o "amicmd_mos.exe" $(LIBS)
+
+mos/mui.o: $(GLOBALDEPS) src/mui.c src/muimacros.h src/gui.h
+	$(CC) -c src/mui.c -o mos/mui.o $(CFLAGS)
+
+mos/gui.o: $(GLOBALDEPS) src/gui.c src/SDI_hook.h src/SDI_compiler.h src/gui.h
+	$(CC) -c src/gui.c -o mos/gui.o $(CFLAGS)
