@@ -12,8 +12,10 @@
 #include <stdlib.h>
 
 #include <libraries/mui.h>
-#include <proto/muimaster.h>
+
 #include <proto/exec.h>
+#include <proto/intuition.h>
+#include <proto/muimaster.h>
 #include <clib/alib_protos.h>
 
 #include "muimacros.h"
@@ -21,7 +23,7 @@
 #include "amicmd.h"
 
 /* --- Library bases --- */
-struct Library *MUIMasterBase,*IntuitionBase;
+struct Library *MUIMasterBase;
 
 /* --- Global variables --- */
 TheApp app;
@@ -34,10 +36,7 @@ void fail(TheApp app, char *str)
 
     if (MUIMasterBase)
         CloseLibrary(MUIMasterBase);
-
-    if (IntuitionBase)
-        CloseLibrary(IntuitionBase);
-
+        
     if (str)
     {
         puts(str);
@@ -49,9 +48,6 @@ void fail(TheApp app, char *str)
 int main(int argc, char **argv)
 {
     ULONG sigs = 0;
-        
-    if (!(IntuitionBase =(struct Library *) OpenLibrary("intuition.library",39)))
-        fail(app,"Cannot open intuition.library v39+\n");
 
     if (!(MUIMasterBase =(struct Library *) OpenLibrary("muimaster.library",19)))
         fail(app,"Cannot open muimaster.library v19+\n");
@@ -157,7 +153,7 @@ int main(int argc, char **argv)
         app.to_right, 3, MUIM_Set, MUIA_Text_Contents, MUIV_TriggerValue); 
 
 
-    set(app.wi_main, MUIA_Window_ActiveObject, app.lv_left);
+    set(app.wi_main, MUIA_Window_ActiveObject, (ULONG)app.lv_left);
 
     set(app.wi_main, MUIA_Window_Open, TRUE);
 
