@@ -8,11 +8,16 @@
 /*                        email: desco@bluelion.hu                             */
 /*                       WWW: http://www.bluelion.hu                           */
 /*                                                                             */
+#include <stdio.h>
+#include <stdlib.h>
 
 #ifndef GUI_H
 #define GUI_H
 
 extern struct Hook UI_TabChangeHook;
+extern struct Hook UI_ParentDirHook;
+extern struct Hook UI_CalcDirInfoHook;
+extern struct Hook UI_PanelDCHook;
 
 enum PanelID
 {

@@ -49,6 +49,15 @@ void fail(TheApp app, char *str)
     exit(0);
 }
 
+/* --- Gets the attributes easily --- */
+LONG xget(Object *obj,ULONG attribute)
+{
+	LONG x;
+	get(obj,attribute,&x);
+	return(x);
+} 
+
+/* ---  main --- */
 int main(int argc, char **argv)
 {
     ULONG sigs = 0;
@@ -158,6 +167,30 @@ int main(int argc, char **argv)
         
     DoMethod(app.lv_right, MUIM_Notify, MUIA_Dirlist_Directory, MUIV_EveryTime,
         app.to_right, 3, MUIM_Set, MUIA_Text_Contents, MUIV_TriggerValue); 
+
+    DoMethod(app.lv_left, MUIM_Notify, MUIA_Dirlist_Status, MUIV_Dirlist_Status_Valid,
+        app.app, 2, MUIM_CallHook, &UI_CalcDirInfoHook);
+    
+    DoMethod(app.lv_right, MUIM_Notify, MUIA_Dirlist_Status, MUIV_Dirlist_Status_Valid,
+        app.app, 2, MUIM_CallHook, &UI_CalcDirInfoHook);
+
+    DoMethod(app.bt_leftup, MUIM_Notify, MUIA_Pressed, FALSE,
+        app.app, 3, MUIM_CallHook, &UI_ParentDirHook, PID_Left);
+    
+    DoMethod(app.bt_rightup, MUIM_Notify, MUIA_Pressed, FALSE,
+        app.app, 3, MUIM_CallHook, &UI_ParentDirHook, PID_Right);
+
+    DoMethod(app.lv_left, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE,
+        app.app, 3, MUIM_CallHook, &UI_PanelDCHook, PID_Left);    
+    
+    DoMethod(app.lv_right, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE,
+        app.app, 3, MUIM_CallHook, &UI_PanelDCHook, PID_Right);    
+
+    DoMethod(app.wi_main, MUIM_Notify, MUIA_Window_InputEvent, "tab",
+        app.app, 3, MUIM_CallHook, &UI_TabChangeHook, PID_None);
+        
+    DoMethod(app.wi_main, MUIM_Notify, MUIA_Window_InputEvent, "f10",
+        app.app, 2, MUIM_Application_ReturnID, MUIV_Application_ReturnID_Quit);
 
 
     set(app.wi_main, MUIA_Window_ActiveObject, (ULONG)app.lv_left);
