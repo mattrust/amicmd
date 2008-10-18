@@ -24,7 +24,7 @@ HOOKPROTONHNO(UI_TabChange, void, int *arg)
     else if (*arg == PID_Right)
         set(app.wi_main, MUIA_Window_ActiveObject, app.lv_right);
         
-    get(app.wi_main, MUIA_Window_ActiveObject, &(app).lv_active);
+    get(app.wi_main, MUIA_Window_ActiveObject, &app.lv_active);
     
     if (app.lv_active == app.lv_right)
     {
