@@ -24,6 +24,7 @@
 
 /* --- Library bases --- */
 struct Library *MUIMasterBase;
+struct IntuitionBase *IntuitionBase;
 
 /* --- Global variables --- */
 TheApp app;
@@ -36,7 +37,10 @@ void fail(TheApp app, char *str)
 
     if (MUIMasterBase)
         CloseLibrary(MUIMasterBase);
-        
+
+    if (IntuitionBase)
+        CloseLibrary((struct Library *)IntuitionBase);
+
     if (str)
     {
         puts(str);
@@ -49,8 +53,11 @@ int main(int argc, char **argv)
 {
     ULONG sigs = 0;
 
+    if (!(IntuitionBase =(struct IntuitionBase *) OpenLibrary("intuition.library",39)))
+      fail(app,"Cannot open intuition.library v39+\n");
+
     if (!(MUIMasterBase =(struct Library *) OpenLibrary("muimaster.library",19)))
-        fail(app,"Cannot open muimaster.library v19+\n");
+      fail(app,"Cannot open muimaster.library v19+\n");
 
     app.app = ApplicationObject,
         MUIA_Application_Title      , "AmiCommander",
