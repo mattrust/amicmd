@@ -19,3 +19,5 @@ typedef struct
 } TheApp;
 
 extern TheApp app;
+
+LONG xget(Object *, ULONG);
