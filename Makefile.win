@@ -1,21 +1,21 @@
 # Project: amicmd
 # Compiler: m68k-AmigaOS
 # Compiler Type: MingW 3
-# Makefile created by wxDev-C++ 6.10.2 on 18.10.08 21:53
+# Makefile created by wxDev-C++ 6.10.2 on 21.10.08 04:27
 
 CPP       = m68k-amigaos-g++.exe
 CC        = m68k-amigaos-gcc.exe
 WINDRES   = windres.exe
 OBJ       = aos3/amicmd.o aos3/gui.o
 LINKOBJ   = aos3/amicmd.o aos3/gui.o
-LIBS      = -L"D:/devel/AmiDevCpp/usr/local/amiga/m68k-amigaos/lib" -L"D:/devel/AmiDevCpp/usr/local/amiga/m68k-amigaos/lib/libnix" -noixemul -s  
+LIBS      = -L"D:/devel/AmiDevCpp/usr/local/amiga/m68k-amigaos/lib" -L"D:/devel/AmiDevCpp/usr/local/amiga/m68k-amigaos/lib/libnix" -noixemul -s   
 INCS      = -I"D:/devel/AmiDevCpp/usr/local/amiga/m68k-amigaos/sys-include" -I"D:/devel/AmiDevCpp/usr/local/amiga/m68k-amigaos/include" -I"D:/devel/AmiDevCpp/usr/local/amiga/include/g++-3"
 CXXINCS   = -I"D:/devel/AmiDevCpp/usr/local/amiga/m68k-amigaos/sys-include" -I"D:/devel/AmiDevCpp/usr/local/amiga/m68k-amigaos/include" -I"D:/devel/AmiDevCpp/usr/local/amiga/include/g++-3"
 RCINCS    = --include-dir "D:/devel/AmiDevCpp/" --include-dir "D:/devel/AmiDevCpp/include/common"
 BIN       = amicmd_aos3.exe
 DEFINES   = 
 CXXFLAGS  = $(CXXINCS) $(DEFINES)   -s -noixemul
-CFLAGS    = $(INCS) $(DEFINES)   -s -noixemul
+CFLAGS    = $(INCS) $(DEFINES) -m68020   -s -noixemul
 GPROF     = gprof.exe
 RM        = rm -f
 LINK      = m68k-amigaos-g++.exe

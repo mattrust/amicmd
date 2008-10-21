@@ -18,6 +18,7 @@ extern struct Hook UI_TabChangeHook;
 extern struct Hook UI_ParentDirHook;
 extern struct Hook UI_CalcDirInfoHook;
 extern struct Hook UI_PanelDCHook;
+extern struct Hook UI_VolumeDCHook;
 
 enum PanelID
 {
