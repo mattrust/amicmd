@@ -104,3 +104,32 @@ HOOKPROTONHNO(UI_PanelDC, void, int *arg)
 }
 
 MakeHook(UI_PanelDCHook, UI_PanelDC);
+
+
+HOOKPROTONHNO(UI_VolumeDC, void, int *arg)
+{
+    char *str;
+    APTR lv_apop, pop_active;
+
+    DoMethod(app.app, MUIM_CallHook, &UI_TabChangeHook, *arg);
+
+    if (*arg == PID_Left)
+    {
+        lv_apop = app.lv_leftpop;
+        pop_active = app.pop_left;
+    }
+    else if (*arg == PID_Right)
+    {
+        lv_apop = app.lv_rightpop;
+        pop_active = app.pop_right;
+    }
+    else
+        return;
+
+    DoMethod(lv_apop, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &str);
+
+    set(app.lv_active, MUIA_Dirlist_Directory,str);
+    DoMethod(pop_active, MUIM_Popstring_Close, TRUE);
+}
+
+MakeHook(UI_VolumeDCHook, UI_VolumeDC);

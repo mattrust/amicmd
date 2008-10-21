@@ -89,6 +89,15 @@ int main(int argc, char **argv)
                             MUIA_InputMode, MUIV_InputMode_RelVerify,    
                         End,
                         Child, HGroup,
+                            Child, app.pop_left = PopobjectObject,
+                                MUIA_Popstring_Button, PopButton(MUII_PopDrawer),
+                                MUIA_Popobject_Object, app.lv_leftpop = ListviewObject,
+                                    MUIA_Listview_List, VolumelistObject,
+                                        InputListFrame,
+                                        MUIA_List_AdjustWidth, TRUE, 
+                                    End,
+                                End,
+                            End,
                             Child, app.to_leftinfo = TextObject, TextFrame, End,
                             Child, app.bt_leftup = WButton(".."),
                         End,
@@ -114,6 +123,15 @@ int main(int argc, char **argv)
                             MUIA_InputMode, MUIV_InputMode_RelVerify,      
                         End,
                         Child, HGroup,
+                            Child, app.pop_right = PopobjectObject,
+                                MUIA_Popstring_Button, PopButton(MUII_PopDrawer),
+                                MUIA_Popobject_Object, app.lv_rightpop = ListviewObject,
+                                    MUIA_Listview_List, VolumelistObject,
+                                        InputListFrame,
+                                        MUIA_List_AdjustWidth, TRUE,
+                                    End,
+                                End,
+                            End,
                             Child, app.to_rightinfo = TextObject, TextFrame, End,
                             Child, app.bt_rightup = WButton(".."),
                         End,
@@ -184,14 +202,19 @@ int main(int argc, char **argv)
         app.app, 3, MUIM_CallHook, &UI_PanelDCHook, PID_Left);    
     
     DoMethod(app.lv_right, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE,
-        app.app, 3, MUIM_CallHook, &UI_PanelDCHook, PID_Right);    
+        app.app, 3, MUIM_CallHook, &UI_PanelDCHook, PID_Right); 
+        
+    DoMethod(app.lv_leftpop, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE,
+        app.app, 3, MUIM_CallHook, &UI_VolumeDCHook, PID_Left);
+
+    DoMethod(app.lv_rightpop, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE,
+        app.app, 3, MUIM_CallHook, &UI_VolumeDCHook, PID_Right);   
 
     DoMethod(app.wi_main, MUIM_Notify, MUIA_Window_InputEvent, "tab",
         app.app, 3, MUIM_CallHook, &UI_TabChangeHook, PID_None);
         
     DoMethod(app.wi_main, MUIM_Notify, MUIA_Window_InputEvent, "f10",
         app.app, 2, MUIM_Application_ReturnID, MUIV_Application_ReturnID_Quit);
-
 
     set(app.wi_main, MUIA_Window_ActiveObject, (ULONG)app.lv_left);
 
