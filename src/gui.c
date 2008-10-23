@@ -23,6 +23,8 @@ HOOKPROTONHNO(UI_TabChange, void, int *arg)
         set(app.wi_main, MUIA_Window_ActiveObject, app.lv_left);
     else if (*arg == PID_Right)
         set(app.wi_main, MUIA_Window_ActiveObject, app.lv_right);
+    else
+        MUI_RequestA(app.app, app.wi_main, 0, "B+", "Ok", "Baszdmeg",NULL);
         
     get(app.wi_main, MUIA_Window_ActiveObject, &app.lv_active);
     
@@ -111,17 +113,20 @@ HOOKPROTONHNO(UI_VolumeDC, void, int *arg)
     char *str;
     APTR lv_apop, pop_active;
 
-    DoMethod(app.app, 3, MUIM_CallHook, &UI_TabChangeHook, *arg);
+
+    DoMethod(app.app, MUIM_CallHook, &UI_TabChangeHook, *arg);
 
     if (*arg == PID_Left)
     {
         lv_apop = app.lv_leftpop;
         pop_active = app.pop_left;
+        app.lv_active = app.lv_left;
     }
     else if (*arg == PID_Right)
     {
         lv_apop = app.lv_rightpop;
         pop_active = app.pop_right;
+        app.lv_active = app.lv_right;
     }
     else
         return;
@@ -130,6 +135,7 @@ HOOKPROTONHNO(UI_VolumeDC, void, int *arg)
 
     set(app.lv_active, MUIA_Dirlist_Directory,str);
     DoMethod(pop_active, MUIM_Popstring_Close, TRUE);
+
 }
 
 MakeHook(UI_VolumeDCHook, UI_VolumeDC);
