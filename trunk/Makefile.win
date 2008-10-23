@@ -1,7 +1,7 @@
 # Project: amicmd
 # Compiler: m68k-AmigaOS
 # Compiler Type: MingW 3
-# Makefile created by wxDev-C++ 6.10.2 on 23.10.08 03:29
+# Makefile created by wxDev-C++ 6.10.2 on 23.10.08 03:36
 
 CPP       = m68k-amigaos-g++.exe
 CC        = m68k-amigaos-gcc.exe
@@ -29,8 +29,8 @@ clean: clean-custom
 $(BIN): $(OBJ)
 	$(LINK) $(LINKOBJ) -o "amicmd_aos3.exe" $(LIBS)
 
-aos3/amicmd.o: $(GLOBALDEPS) src/amicmd.c src/muimacros.h src/gui.h src/amicmd.h
+aos3/amicmd.o: $(GLOBALDEPS) src/amicmd.c
 	$(CC) -c src/amicmd.c -o aos3/amicmd.o $(CFLAGS)
 
-aos3/gui.o: $(GLOBALDEPS) src/gui.c src/SDI_hook.h src/SDI_compiler.h src/gui.h src/amicmd.h
+aos3/gui.o: $(GLOBALDEPS) src/gui.c
 	$(CC) -c src/gui.c -o aos3/gui.o $(CFLAGS)

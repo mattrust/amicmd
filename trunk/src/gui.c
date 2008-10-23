@@ -111,7 +111,7 @@ HOOKPROTONHNO(UI_VolumeDC, void, int *arg)
     char *str;
     APTR lv_apop, pop_active;
 
-    DoMethod(app.app, MUIM_CallHook, &UI_TabChangeHook, *arg);
+    DoMethod(app.app, 3, MUIM_CallHook, &UI_TabChangeHook, *arg);
 
     if (*arg == PID_Left)
     {
