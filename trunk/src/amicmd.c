@@ -219,6 +219,7 @@ int main(int argc, char **argv)
         app.app, 2, MUIM_Application_ReturnID, MUIV_Application_ReturnID_Quit);
 
     set(app.wi_main, MUIA_Window_ActiveObject, (ULONG)app.lv_left);
+    app.lv_active = app.lv_left;
 
     set(app.wi_main, MUIA_Window_Open, TRUE);
 
