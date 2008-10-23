@@ -23,8 +23,8 @@ HOOKPROTONHNO(UI_TabChange, void, int *arg)
         set(app.wi_main, MUIA_Window_ActiveObject, app.lv_left);
     else if (*arg == PID_Right)
         set(app.wi_main, MUIA_Window_ActiveObject, app.lv_right);
-    else
-        MUI_RequestA(app.app, app.wi_main, 0, "B+", "Ok", "Baszdmeg",NULL);
+
+    //printf("TabChange arg: %d\n",*arg);
         
     get(app.wi_main, MUIA_Window_ActiveObject, &app.lv_active);
     
@@ -120,13 +120,11 @@ HOOKPROTONHNO(UI_VolumeDC, void, int *arg)
     {
         lv_apop = app.lv_leftpop;
         pop_active = app.pop_left;
-        app.lv_active = app.lv_left;
     }
     else if (*arg == PID_Right)
     {
         lv_apop = app.lv_rightpop;
         pop_active = app.pop_right;
-        app.lv_active = app.lv_right;
     }
     else
         return;
