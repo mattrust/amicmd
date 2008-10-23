@@ -1,7 +1,7 @@
 # Project: amicmd
 # Compiler: m68k-AmigaOS
 # Compiler Type: MingW 3
-# Makefile created by wxDev-C++ 6.10.2 on 21.10.08 04:27
+# Makefile created by wxDev-C++ 6.10.2 on 23.10.08 03:29
 
 CPP       = m68k-amigaos-g++.exe
 CC        = m68k-amigaos-gcc.exe
