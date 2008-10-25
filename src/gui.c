@@ -10,7 +10,9 @@
 /*                                                                             */
 
 #include <libraries/mui.h>
+#include <libraries/dos.h>
 #include <proto/muimaster.h>
+#include <proto/dos.h>
 
 #include "SDI_hook.h"
 #include "gui.h"
@@ -18,57 +20,103 @@
 
 HOOKPROTONHNO(UI_TabChange, void, int *arg)
 {
-    
-    if (*arg == PID_Left)
-        set(app.wi_main, MUIA_Window_ActiveObject, app.lv_left);
-    else if (*arg == PID_Right)
+    if (app.ActivePanel == PID_Left)
+    {
         set(app.wi_main, MUIA_Window_ActiveObject, app.lv_right);
-
-    //printf("TabChange arg: %d\n",*arg);
-        
-    get(app.wi_main, MUIA_Window_ActiveObject, &app.lv_active);
-    
-    if (app.lv_active == app.lv_right)
-    {
-        app.to_active = app.to_right;
-        app.to_inactive = app.to_left;
-        app.lv_inactive = app.lv_left;
+        app.ActivePanel = PID_Right;
     }
-    else if (app.lv_active == app.lv_left)
+    else if (app.ActivePanel == PID_Right)
     {
-        app.to_active = app.to_left;
-        app.to_inactive = app.to_right;
-        app.lv_inactive = app.lv_right;
+        set(app.wi_main, MUIA_Window_ActiveObject, app.lv_left);
+        app.ActivePanel = PID_Left;
     }
-    else
-        return;
-    
-    set(app.to_inactive, MUIA_Background, MUII_BACKGROUND);
-    set(app.to_inactive, MUIA_Text_PreParse, "\0332");
-    set(app.to_active, MUIA_Background,MUII_FILL);
-    set(app.to_active, MUIA_Text_PreParse, "\0333"); 
-    
 }
 
 MakeHook(UI_TabChangeHook, UI_TabChange);
 
+HOOKPROTONHNONP(UI_ActiveObject, void)
+{
+    APTR lv_active, to_active, to_inactive;
+    
+    lv_active = (APTR)xget(app.wi_main, MUIA_Window_ActiveObject);
+    
+    if (lv_active == app.lv_left)
+    {
+        to_active = app.to_left;
+        to_inactive = app.to_right;
+    }
+    else if (lv_active == app.lv_right)
+    {
+        to_active = app.to_right;
+        to_inactive = app.to_left;
+    }
+    else
+    {
+        return;
+    }
+    
+    set(to_active, MUIA_Background, MUII_FILL);    
+    set(to_active, MUIA_Text_PreParse, "\0333");
+    set(to_inactive, MUIA_Background, MUII_BACKGROUND);
+    set(to_inactive, MUIA_Text_PreParse, "\0330");
+    
+}
+
+MakeHook(UI_ActiveObjectHook, UI_ActiveObject);
+
+
+HOOKPROTONHNO(UI_RootVolume, void, int *arg)
+{
+    APTR lv_active;
+    char oldpath[512];
+    char newpath[128];
+    ULONG i = 0;
+    
+    if (*arg == PID_Left)
+        lv_active = app.lv_left;
+    else if (*arg == PID_Right)
+        lv_active = app.lv_right;
+    else
+        return;
+        
+    strcpy(oldpath, (char *)xget(lv_active, MUIA_Dirlist_Directory));
+    
+    while(oldpath[i-1] != ':')
+    {
+        newpath[i] = oldpath[i];
+        i++;
+    }
+        
+    newpath[i] = '\0';
+        
+    set(lv_active, MUIA_Dirlist_Directory, newpath);
+    set(app.wi_main, MUIA_Window_ActiveObject, lv_active);
+}
+MakeHook(UI_RootVolumeHook, UI_RootVolume);
 
 HOOKPROTONHNO(UI_ParentDir, void, int *arg)
 {
     char path[512];
     char npath[512];
     size_t len;
+    APTR lv_active;
     
-    DoMethod(app.app, MUIM_CallHook, &UI_TabChangeHook, *arg);
+    if (*arg == PID_Left)
+        lv_active = app.lv_left;
+    else if (*arg == PID_Right)
+        lv_active = app.lv_right;
+    else
+        return;
     
-    strcpy(path, (char *)xget(app.lv_active, MUIA_Dirlist_Directory));
+    strcpy(path, (char *)xget(lv_active, MUIA_Dirlist_Directory));
     
     len = strlen(path) - strlen((char *)PathPart(path));
     
     strncpy(npath, path, len);
     npath[len] = '\0';
     
-    set(app.lv_active, MUIA_Dirlist_Directory, npath);
+    set(lv_active, MUIA_Dirlist_Directory, npath);
+    set(app.wi_main, MUIA_Window_ActiveObject, lv_active);
 }
 
 MakeHook(UI_ParentDirHook, UI_ParentDir);
@@ -92,17 +140,24 @@ MakeHook(UI_CalcDirInfoHook, UI_CalcDirInfo);
 HOOKPROTONHNO(UI_PanelDC, void, int *arg)
 {
     struct FileInfoBlock *fib;
+    APTR lv_active;
     
-    DoMethod(app.app, MUIM_CallHook, &UI_TabChangeHook, *arg);
+    if (*arg == PID_Left)
+        lv_active = app.lv_left;
+    else if (*arg == PID_Right)
+        lv_active = app.lv_right;
+    else
+        return;
     
-    DoMethod(app.lv_active, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &fib);
+    DoMethod(lv_active, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &fib);
     
     if (!fib)
         return;    
     
     if (fib->fib_DirEntryType > 0)
-        set(app.lv_active, MUIA_Dirlist_Directory,xget(app.lv_active, MUIA_Dirlist_Path));
-    
+        set(lv_active, MUIA_Dirlist_Directory,xget(lv_active, MUIA_Dirlist_Path));
+
+    set(app.wi_main, MUIA_Window_ActiveObject, lv_active);    
 }
 
 MakeHook(UI_PanelDCHook, UI_PanelDC);
@@ -111,28 +166,29 @@ MakeHook(UI_PanelDCHook, UI_PanelDC);
 HOOKPROTONHNO(UI_VolumeDC, void, int *arg)
 {
     char *str;
-    APTR lv_apop, pop_active;
+    APTR lv_apop, pop_active, lv_active;
 
-
-    DoMethod(app.app, MUIM_CallHook, &UI_TabChangeHook, *arg);
 
     if (*arg == PID_Left)
     {
         lv_apop = app.lv_leftpop;
         pop_active = app.pop_left;
+        lv_active = app.lv_left;
     }
     else if (*arg == PID_Right)
     {
         lv_apop = app.lv_rightpop;
         pop_active = app.pop_right;
+        lv_active = app.lv_right;
     }
     else
         return;
 
     DoMethod(lv_apop, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &str);
 
-    set(app.lv_active, MUIA_Dirlist_Directory,str);
+    set(lv_active, MUIA_Dirlist_Directory,str);
     DoMethod(pop_active, MUIM_Popstring_Close, TRUE);
+    set(app.wi_main, MUIA_Window_ActiveObject, lv_active);
 
 }
 
