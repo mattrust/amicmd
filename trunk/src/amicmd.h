@@ -13,10 +13,12 @@ typedef struct
 {
     APTR app,
     wi_main,
-    lv_left, lv_right, to_left, to_right, lv_active, lv_inactive, to_active, to_inactive,
+    lv_left, lv_right, to_left, to_right,
     to_leftinfo, to_rightinfo, bt_leftup, bt_rightup,
     pop_left, pop_right, lv_leftpop, lv_rightpop,
-    bt_view, bt_edit, bt_copy, bt_rename, bt_move,bt_makedir, bt_delete, bt_exit;
+    bt_view, bt_edit, bt_copy, bt_rename, bt_move,bt_makedir, bt_delete, bt_exit,
+    bt_rootleft, bt_rootright;
+    ULONG ActivePanel;
 } TheApp;
 
 extern TheApp app;

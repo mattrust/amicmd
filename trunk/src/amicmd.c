@@ -83,7 +83,7 @@ int main(int argc, char **argv)
                     Child, VGroup,
                         Child, app.to_left = TextObject,
                             TextFrame, 
-                            MUIA_Text_Contents, "DH0:",
+                            MUIA_Text_Contents, "System:",
                             MUIA_Background, MUII_FILL,
                             MUIA_Text_PreParse, "\0333",
                             MUIA_InputMode, MUIV_InputMode_RelVerify,    
@@ -99,7 +99,7 @@ int main(int argc, char **argv)
                                 End,
                             End,
                             Child, app.to_leftinfo = TextObject, TextFrame, End,
-                            Child, WButton(":"),
+                            Child, app.bt_rootleft = WButton(":"),
                             Child, app.bt_leftup = WButton("/"),
                         End,
     			        Child, app.lv_left = ListviewObject,
@@ -109,7 +109,7 @@ int main(int argc, char **argv)
                    			MUIA_Listview_MultiSelect, MUIV_Listview_MultiSelect_Shifted,
     						MUIA_Listview_List, DirlistObject,
 	   							InputListFrame,
-	       						MUIA_Dirlist_Directory, "DH0:",
+	       						MUIA_Dirlist_Directory, "System:",
 		         				MUIA_List_Title, TRUE,
 				      			MUIA_Dirlist_RejectIcons, FALSE,
 				      			MUIA_Dirlist_MultiSelDirs, TRUE,
@@ -120,7 +120,7 @@ int main(int argc, char **argv)
 					Child, VGroup,
                         Child, app.to_right = TextObject,
                             TextFrame, 
-                            MUIA_Text_Contents, "DH0:",     
+                            MUIA_Text_Contents, "System:",
                             MUIA_InputMode, MUIV_InputMode_RelVerify,      
                         End,
                         Child, HGroup,
@@ -134,7 +134,7 @@ int main(int argc, char **argv)
                                 End,
                             End,
                             Child, app.to_rightinfo = TextObject, TextFrame, End,
-                            Child, WButton(":"),
+                            Child, app.bt_rootright = WButton(":"),
                             Child, app.bt_rightup = WButton("/"),
                         End,
     			        Child, app.lv_right = ListviewObject,
@@ -144,7 +144,7 @@ int main(int argc, char **argv)
                     		MUIA_Listview_MultiSelect, MUIV_Listview_MultiSelect_Shifted,
     						MUIA_Listview_List, DirlistObject,
 	    						InputListFrame,
-		       					MUIA_Dirlist_Directory, "DH0:",
+		       					MUIA_Dirlist_Directory, "System:",
 			         			MUIA_List_Title, TRUE,
 					      		MUIA_Dirlist_RejectIcons, FALSE,
 				      			MUIA_Dirlist_MultiSelDirs, TRUE,
@@ -165,7 +165,6 @@ int main(int argc, char **argv)
     		End,
     	End,
     End;
- 
 
     if (!app.app)
         fail(app,"Failed to create application");
@@ -176,11 +175,8 @@ int main(int argc, char **argv)
     DoMethod(app.bt_exit, MUIM_Notify, MUIA_Pressed, FALSE,
         app.app, 2, MUIM_Application_ReturnID, MUIV_Application_ReturnID_Quit);
 
-    DoMethod(app.to_left, MUIM_Notify, MUIA_Pressed, FALSE,
-        app.app, 3, MUIM_CallHook, &UI_TabChangeHook, PID_Left);
-        
-    DoMethod(app.to_right, MUIM_Notify, MUIA_Pressed, FALSE,
-        app.app, 3, MUIM_CallHook, &UI_TabChangeHook, PID_Right);
+    DoMethod(app.wi_main, MUIM_Notify, MUIA_Window_ActiveObject, MUIV_EveryTime,
+        app.wi_main, 2, MUIM_CallHook, &UI_ActiveObjectHook);
 
     DoMethod(app.lv_left, MUIM_Notify, MUIA_Dirlist_Directory, MUIV_EveryTime,
         app.to_left, 3, MUIM_Set, MUIA_Text_Contents, MUIV_TriggerValue);
@@ -194,6 +190,14 @@ int main(int argc, char **argv)
     DoMethod(app.lv_right, MUIM_Notify, MUIA_Dirlist_Status, MUIV_Dirlist_Status_Valid,
         app.app, 2, MUIM_CallHook, &UI_CalcDirInfoHook);
 
+    // Root volume
+    DoMethod(app.bt_rootleft, MUIM_Notify, MUIA_Pressed, FALSE,
+        app.app, 3, MUIM_CallHook, &UI_RootVolumeHook, PID_Left);
+
+    DoMethod(app.bt_rootright, MUIM_Notify, MUIA_Pressed, FALSE,
+        app.app, 3, MUIM_CallHook, &UI_RootVolumeHook, PID_Right);
+
+    // Parent directory
     DoMethod(app.bt_leftup, MUIM_Notify, MUIA_Pressed, FALSE,
         app.app, 3, MUIM_CallHook, &UI_ParentDirHook, PID_Left);
     
@@ -213,16 +217,16 @@ int main(int argc, char **argv)
         app.app, 3, MUIM_CallHook, &UI_VolumeDCHook, PID_Right);   
 
     DoMethod(app.wi_main, MUIM_Notify, MUIA_Window_InputEvent, "tab",
-        app.app, 3, MUIM_CallHook, &UI_TabChangeHook, PID_None);
+        app.app, 2, MUIM_CallHook, &UI_TabChangeHook);
         
     DoMethod(app.wi_main, MUIM_Notify, MUIA_Window_InputEvent, "f10",
         app.app, 2, MUIM_Application_ReturnID, MUIV_Application_ReturnID_Quit);
 
     set(app.wi_main, MUIA_Window_ActiveObject, (ULONG)app.lv_left);
-    app.lv_active = app.lv_left;
+    app.ActivePanel = PID_Left;
 
     set(app.wi_main, MUIA_Window_Open, TRUE);
-
+    
     /* --- Event handling --- */
 
     while(DoMethod(app.app, MUIM_Application_NewInput, &sigs) != MUIV_Application_ReturnID_Quit)

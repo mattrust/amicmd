@@ -15,6 +15,8 @@
 #define GUI_H
 
 extern struct Hook UI_TabChangeHook;
+extern struct Hook UI_ActiveObjectHook;
+extern struct Hook UI_RootVolumeHook;
 extern struct Hook UI_ParentDirHook;
 extern struct Hook UI_CalcDirInfoHook;
 extern struct Hook UI_PanelDCHook;
