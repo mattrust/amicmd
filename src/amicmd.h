@@ -17,10 +17,11 @@ typedef struct
     to_leftinfo, to_rightinfo, bt_leftup, bt_rightup,
     pop_left, pop_right, lv_leftpop, lv_rightpop,
     bt_view, bt_edit, bt_copy, bt_rename, bt_move,bt_makedir, bt_delete, bt_exit,
-    bt_rootleft, bt_rootright;
+    bt_rootleft, bt_rootright,
+    wi_newdir, bt_newdirok, bt_newdircancel, st_newdirname;
     ULONG ActivePanel;
 } TheApp;
 
 extern TheApp app;
 
-LONG xget(Object *, ULONG);
+ULONG xget(Object *, ULONG);

@@ -20,6 +20,7 @@
 
 #include "muimacros.h"
 #include "gui.h"
+#include "tools.h"
 #include "amicmd.h"
 
 /* --- Library bases --- */
@@ -50,9 +51,9 @@ void fail(TheApp app, char *str)
 }
 
 /* --- Gets the attributes easily --- */
-LONG xget(Object *obj,ULONG attribute)
+ULONG xget(Object *obj,ULONG attribute)
 {
-	LONG x;
+	ULONG x;
 	get(obj,attribute,&x);
 	return(x);
 } 
@@ -158,12 +159,26 @@ int main(int argc, char **argv)
                     Child, app.bt_copy = NButton("\033bF5\033n Copy",TRUE),
                     Child, app.bt_move = NButton("\033bF6\033n Move",TRUE),
                     Child, app.bt_rename = NButton("\033bF9\033n Rename",TRUE),
-                    Child, app.bt_makedir = NButton("\033bF7\033n MakeDir",TRUE),
+                    Child, app.bt_makedir = NButton("\033bF7\033n MakeDir",FALSE),
                     Child, app.bt_delete = NButton("\033bF8\033n Delete",TRUE),
                     Child, app.bt_exit = NButton("\033bF10\033n Exit",FALSE),
                 End, 
     		End,
     	End,
+        SubWindow, app.wi_newdir = WindowObject,
+            MUIA_Window_Title, "New Drawer",
+            MUIA_Window_ID, MAKE_ID('W','I','N','D'),
+            WindowContents, VGroup,
+                Child, app.st_newdirname = StringObject,
+                    StringFrame,
+                    MUIA_CycleChain, 1,
+                End,
+                Child, HGroup,
+                    Child, app.bt_newdirok = NButton("Create",FALSE),
+                    Child, app.bt_newdircancel = NButton("Cancel",FALSE),
+                End,
+            End,
+        End,
     End;
 
     if (!app.app)
@@ -189,6 +204,9 @@ int main(int argc, char **argv)
     
     DoMethod(app.lv_right, MUIM_Notify, MUIA_Dirlist_Status, MUIV_Dirlist_Status_Valid,
         app.app, 2, MUIM_CallHook, &UI_CalcDirInfoHook);
+
+    DoMethod(app.to_right, MUIM_Notify, MUIA_Pressed, FALSE,
+        app.wi_main, 3, MUIM_Set, MUIA_Window_ActiveObject, app.lv_right);
 
     // Root volume
     DoMethod(app.bt_rootleft, MUIM_Notify, MUIA_Pressed, FALSE,
@@ -221,6 +239,22 @@ int main(int argc, char **argv)
         
     DoMethod(app.wi_main, MUIM_Notify, MUIA_Window_InputEvent, "f10",
         app.app, 2, MUIM_Application_ReturnID, MUIV_Application_ReturnID_Quit);
+        
+        
+    DoMethod(app.bt_makedir, MUIM_Notify, MUIA_Pressed, FALSE,
+        app.wi_newdir, 3, MUIM_Set, MUIA_Window_Open, TRUE);
+
+    DoMethod(app.bt_newdirok, MUIM_Notify, MUIA_Pressed, FALSE,
+        app.app, 2, MUIM_CallHook, &TO_NewDrawerHook);
+
+    DoMethod(app.bt_newdircancel, MUIM_Notify, MUIA_Pressed, FALSE,
+        app.wi_newdir, 3, MUIM_Set, MUIA_Window_Open, FALSE);
+
+    DoMethod(app.wi_newdir, MUIM_Notify, MUIA_Window_CloseRequest, TRUE,
+        app.wi_newdir, 3, MUIM_Set, MUIA_Window_Open, FALSE);
+
+    DoMethod(app.wi_newdir, MUIM_Notify, MUIA_Window_Open, TRUE,
+        app.wi_newdir, 3, MUIM_Set, MUIA_Window_ActiveObject, app.st_newdirname);
 
     set(app.wi_main, MUIA_Window_ActiveObject, (ULONG)app.lv_left);
     app.ActivePanel = PID_Left;
@@ -237,4 +271,5 @@ int main(int argc, char **argv)
   
     /* --- Exit --- */
     fail(app, NULL);
+    return 0;
 }
