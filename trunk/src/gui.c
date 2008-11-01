@@ -8,11 +8,14 @@
 /*                        email: desco@bluelion.hu                             */
 /*                       WWW: http://www.bluelion.hu                           */
 /*                                                                             */
+#include <string.h>
+
 
 #include <libraries/mui.h>
 #include <libraries/dos.h>
 #include <proto/muimaster.h>
 #include <proto/dos.h>
+#include <clib/alib_protos.h>
 
 #include "SDI_hook.h"
 #include "gui.h"
@@ -44,11 +47,13 @@ HOOKPROTONHNONP(UI_ActiveObject, void)
     {
         to_active = app.to_left;
         to_inactive = app.to_right;
+        app.ActivePanel = PID_Left;
     }
     else if (lv_active == app.lv_right)
     {
         to_active = app.to_right;
         to_inactive = app.to_left;
+        app.ActivePanel = PID_Right;
     }
     else
     {
@@ -100,7 +105,7 @@ HOOKPROTONHNO(UI_ParentDir, void, int *arg)
     char npath[512];
     size_t len;
     APTR lv_active;
-    
+
     if (*arg == PID_Left)
         lv_active = app.lv_left;
     else if (*arg == PID_Right)
@@ -114,6 +119,7 @@ HOOKPROTONHNO(UI_ParentDir, void, int *arg)
     
     strncpy(npath, path, len);
     npath[len] = '\0';
+
     
     set(lv_active, MUIA_Dirlist_Directory, npath);
     set(app.wi_main, MUIA_Window_ActiveObject, lv_active);
@@ -126,10 +132,10 @@ HOOKPROTONHNONP(UI_CalcDirInfo,void)
 {
     char info[256];
     
-    sprintf(info,"%d dirs / %d files",xget(app.lv_left,MUIA_Dirlist_NumDrawers),xget(app.lv_left, MUIA_Dirlist_NumFiles));
+    sprintf(info,"%ld dirs / %ld files",xget(app.lv_left,MUIA_Dirlist_NumDrawers),xget(app.lv_left, MUIA_Dirlist_NumFiles));
     set(app.to_leftinfo, MUIA_Text_Contents, info);
 
-    sprintf(info,"%d dirs / %d files",xget(app.lv_right,MUIA_Dirlist_NumDrawers),xget(app.lv_right, MUIA_Dirlist_NumFiles));
+    sprintf(info,"%ld dirs / %ld files",xget(app.lv_right,MUIA_Dirlist_NumDrawers),xget(app.lv_right, MUIA_Dirlist_NumFiles));
     set(app.to_rightinfo, MUIA_Text_Contents, info);
     
 }

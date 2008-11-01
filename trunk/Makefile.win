@@ -1,13 +1,13 @@
 # Project: amicmd
 # Compiler: m68k-AmigaOS
 # Compiler Type: MingW 3
-# Makefile created by wxDev-C++ 6.10.2 on 23.10.08 03:36
+# Makefile created by wxDev-C++ 6.10.2 on 01.11.08 23:49
 
 CPP       = m68k-amigaos-g++.exe
 CC        = m68k-amigaos-gcc.exe
 WINDRES   = windres.exe
-OBJ       = aos3/amicmd.o aos3/gui.o
-LINKOBJ   = aos3/amicmd.o aos3/gui.o
+OBJ       = aos3/amicmd.o aos3/gui.o aos3/tools.o
+LINKOBJ   = aos3/amicmd.o aos3/gui.o aos3/tools.o
 LIBS      = -L"D:/devel/AmiDevCpp/usr/local/amiga/m68k-amigaos/lib" -L"D:/devel/AmiDevCpp/usr/local/amiga/m68k-amigaos/lib/libnix" -noixemul -s   
 INCS      = -I"D:/devel/AmiDevCpp/usr/local/amiga/m68k-amigaos/sys-include" -I"D:/devel/AmiDevCpp/usr/local/amiga/m68k-amigaos/include" -I"D:/devel/AmiDevCpp/usr/local/amiga/include/g++-3"
 CXXINCS   = -I"D:/devel/AmiDevCpp/usr/local/amiga/m68k-amigaos/sys-include" -I"D:/devel/AmiDevCpp/usr/local/amiga/m68k-amigaos/include" -I"D:/devel/AmiDevCpp/usr/local/amiga/include/g++-3"
@@ -15,7 +15,7 @@ RCINCS    = --include-dir "D:/devel/AmiDevCpp/" --include-dir "D:/devel/AmiDevCp
 BIN       = amicmd_aos3.exe
 DEFINES   = 
 CXXFLAGS  = $(CXXINCS) $(DEFINES)   -s -noixemul
-CFLAGS    = $(INCS) $(DEFINES) -m68020   -s -noixemul
+CFLAGS    = $(INCS) $(DEFINES) -m68020 -Wall   -s -noixemul
 GPROF     = gprof.exe
 RM        = rm -f
 LINK      = m68k-amigaos-g++.exe
@@ -29,8 +29,11 @@ clean: clean-custom
 $(BIN): $(OBJ)
 	$(LINK) $(LINKOBJ) -o "amicmd_aos3.exe" $(LIBS)
 
-aos3/amicmd.o: $(GLOBALDEPS) src/amicmd.c
+aos3/amicmd.o: $(GLOBALDEPS) src/amicmd.c src/muimacros.h src/gui.h src/tools.h src/amicmd.h
 	$(CC) -c src/amicmd.c -o aos3/amicmd.o $(CFLAGS)
 
-aos3/gui.o: $(GLOBALDEPS) src/gui.c
+aos3/gui.o: $(GLOBALDEPS) src/gui.c src/SDI_hook.h src/SDI_compiler.h src/gui.h src/amicmd.h
 	$(CC) -c src/gui.c -o aos3/gui.o $(CFLAGS)
+
+aos3/tools.o: $(GLOBALDEPS) src/tools.c src/SDI_hook.h src/SDI_compiler.h src/gui.h src/tools.h src/amicmd.h
+	$(CC) -c src/tools.c -o aos3/tools.o $(CFLAGS)
