@@ -207,6 +207,9 @@ int main(int argc, char **argv)
 
     DoMethod(app.to_right, MUIM_Notify, MUIA_Pressed, FALSE,
         app.wi_main, 3, MUIM_Set, MUIA_Window_ActiveObject, app.lv_right);
+        
+    DoMethod(app.to_left, MUIM_Notify, MUIA_Pressed, FALSE,
+        app.wi_main, 3, MUIM_Set, MUIA_Window_ActiveObject, app.lv_left);
 
     // Root volume
     DoMethod(app.bt_rootleft, MUIM_Notify, MUIA_Pressed, FALSE,
